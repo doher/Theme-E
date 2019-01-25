@@ -75,6 +75,7 @@ function createForm(data) {
             case 'check':
                 input.setAttribute('type', 'checkbox');
                 input.setAttribute('name', element.name);
+                input.setAttribute('checked', 'true');
                 td2.appendChild(input);
                 break;
 
@@ -137,12 +138,12 @@ validationText(siteUrl);
 validationText(visitors);
 validationText(email);
 validationForm(votes);
+validationTextarea();
 
 function validationForm(item) {
     let input = document.getElementsByTagName('input');
 
     item.addEventListener('change', function () {
-
         for (let i = 0; i < input.length; ++i) {
             if (input[i].type === 'text' && !(input[i].value)) {
                 let divError = input[i].parentNode.nextSibling.children[0];
@@ -185,3 +186,21 @@ function validationText(item) {
         }
     }, false);
 }
+
+function validationTextarea() {
+    let formTag = document.forms['formDef1'],
+        votes = formTag.elements['votes'],
+        description = formTag.elements['description'];
+
+    votes.addEventListener('click', function () {
+
+        if (!!(votes.checked)) {
+            description.removeAttribute('disabled');            
+            votes.checked = true;
+        } else {
+            description.setAttribute('disabled', 'true');
+            votes.checked = false;
+        }
+    }, false);
+}
+
