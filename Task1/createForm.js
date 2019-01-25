@@ -129,14 +129,31 @@ let formTag = document.forms['formDef1'],
     siteName = formTag.elements['sitename'],
     siteUrl = formTag.elements['siteurl'],
     visitors = formTag.elements['visitors'],
-    email = formTag.elements['email'];
+    email = formTag.elements['email'],
+    votes = formTag.elements['votes'];
 
-validationIput(siteName);
-validationIput(siteUrl);
-validationIput(visitors);
-validationIput(email);
+validationText(siteName);
+validationText(siteUrl);
+validationText(visitors);
+validationText(email);
+validationForm(votes);
 
-function validationIput(item) {
+function validationForm(item) {
+    let input = document.getElementsByTagName('input');
+
+    item.addEventListener('change', function () {
+
+        for (let i = 0; i < input.length; ++i) {
+            if (input[i].type === 'text' && !(input[i].value)) {
+                let divError = input[i].parentNode.nextSibling.children[0];
+                divError.className = 'error';
+                divError.innerHTML = 'Поля должны быть заполнены!';
+            }
+        }
+    }, false);
+}
+
+function validationText(item) {
     let name = item.name;
 
     item.addEventListener('blur', function () {
