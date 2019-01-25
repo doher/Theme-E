@@ -1,29 +1,75 @@
 'use strict';
 
-const formDef1 = [
-    { label: 'Название сайта:', kind: 'longtext', name: 'sitename' },
-    { label: 'URL сайта:', kind: 'longtext', name: 'siteurl' },
-    { label: 'Посетителей в сутки:', kind: 'number', name: 'visitors' },
-    { label: 'E-mail для связи:', kind: 'shorttext', name: 'email' },
+const formDef1 = [{
+        label: 'Название сайта:',
+        kind: 'longtext',
+        name: 'sitename'
+    },
     {
-        label: 'Рубрика каталога:', kind: 'combo', name: 'division',
-        variants: [
-            { text: 'здоровье', value: 1 },
-            { text: 'домашний уют', value: 2 },
-            { text: 'бытовая техника', value: 3 }
+        label: 'URL сайта:',
+        kind: 'longtext',
+        name: 'siteurl'
+    },
+    {
+        label: 'Посетителей в сутки:',
+        kind: 'number',
+        name: 'visitors'
+    },
+    {
+        label: 'E-mail для связи:',
+        kind: 'shorttext',
+        name: 'email'
+    },
+    {
+        label: 'Рубрика каталога:',
+        kind: 'combo',
+        name: 'division',
+        variants: [{
+                text: 'здоровье',
+                value: 1
+            },
+            {
+                text: 'домашний уют',
+                value: 2
+            },
+            {
+                text: 'бытовая техника',
+                value: 3
+            }
         ]
     },
     {
-        label: 'Размещение:', kind: 'radio', name: 'payment',
-        variants: [
-            { text: 'бесплатное', value: 1 },
-            { text: 'платное', value: 2 },
-            { text: 'VIP', value: 3 }
+        label: 'Размещение:',
+        kind: 'radio',
+        name: 'payment',
+        variants: [{
+                text: 'бесплатное',
+                value: 1
+            },
+            {
+                text: 'платное',
+                value: 2
+            },
+            {
+                text: 'VIP',
+                value: 3
+            }
         ]
     },
-    { label: 'Разрешить отзывы:', kind: 'check', name: 'votes' },
-    { label: 'Описание сайта:', kind: 'memo', name: 'description' },
-    { label: 'Опубликовать:', kind: 'submit' },
+    {
+        label: 'Разрешить отзывы:',
+        kind: 'check',
+        name: 'votes'
+    },
+    {
+        label: 'Описание сайта:',
+        kind: 'memo',
+        name: 'description'
+    },
+    {
+        label: 'Опубликовать:',
+        kind: 'submit'
+    },
 ];
 
 function createForm(data) {
@@ -139,6 +185,7 @@ validationText(visitors);
 validationText(email);
 validationForm(votes);
 validationTextarea();
+validationCombobox();
 
 function validationForm(item) {
     let input = document.getElementsByTagName('input');
@@ -147,8 +194,15 @@ function validationForm(item) {
         for (let i = 0; i < input.length; ++i) {
             if (input[i].type === 'text' && !(input[i].value)) {
                 let divError = input[i].parentNode.nextSibling.children[0];
+
                 divError.className = 'error';
-                divError.innerHTML = 'Поля должны быть заполнены!';
+                divError.innerHTML = 'Поле должно быть заполнено!';
+            }
+            else if (input[i].type === 'radio') {
+                let divError = input[i].parentNode.nextSibling.children[0];
+
+                divError.className = 'error';
+                divError.innerHTML = 'Поле должно быть заполнено!';
             }
         }
     }, false);
@@ -195,7 +249,7 @@ function validationTextarea() {
     votes.addEventListener('click', function () {
 
         if (!!(votes.checked)) {
-            description.removeAttribute('disabled');            
+            description.removeAttribute('disabled');
             votes.checked = true;
         } else {
             description.setAttribute('disabled', 'true');
@@ -204,3 +258,16 @@ function validationTextarea() {
     }, false);
 }
 
+function validationCombobox() {
+    let input = document.getElementsByTagName('input');
+
+    for (let i = 0; i < input.length; ++i) {
+        if (input[i].type === 'radio') {
+            input[i].addEventListener('click', function () {
+                let divError = input[i].parentNode.nextSibling.children[0];
+                
+                divError.innerHTML = '';
+            }, false);
+        }
+    }
+}
