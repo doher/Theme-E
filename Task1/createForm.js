@@ -74,7 +74,6 @@ function createForm(data) {
 
             case 'check':
                 input.setAttribute('type', 'checkbox');
-                input.setAttribute('checked', 'true');
                 input.setAttribute('name', element.name);
                 td2.appendChild(input);
                 break;
@@ -132,23 +131,40 @@ let formTag = document.forms['formDef1'],
     visitors = formTag.elements['visitors'],
     email = formTag.elements['email'];
 
-validationForm(siteName);
-validationForm(siteUrl);
-validationForm(visitors);
-validationForm(email);
+validationIput(siteName);
+validationIput(siteUrl);
+validationIput(visitors);
+validationIput(email);
 
-function validationForm(item) {
+function validationIput(item) {
+    let name = item.name;
+
     item.addEventListener('blur', function () {
+        let divError = this.parentNode.nextSibling.children[0];
+
         if (!(this.value)) {
-            this.parentNode.nextSibling.children[0].className = 'error';
-            this.parentNode.nextSibling.children[0].innerHTML = 'Введите значение!';
+            divError.className = 'error';
+            divError.innerHTML = 'Введите значение!';
         }
     }, false);
 
+    if (name === 'visitors') {
+        item.addEventListener('blur', function () {
+            let divError = this.parentNode.nextSibling.children[0];
+
+            if (isNaN(this.value) || !(this.value)) {
+                divError.className = 'error';
+                divError.innerHTML = 'Введите число!';
+            }
+        }, false);
+    }
+
     item.addEventListener('focus', function () {
-        if (this.className == 'error') {
-            this.parentNode.nextSibling.children[0].className = '';
-            this.parentNode.nextSibling.children[0].innerHTML = '';
+        let divError = this.parentNode.nextSibling.children[0];
+
+        if (divError.className == 'error') {
+            divError.className = '';
+            divError.innerHTML = '';
         }
     }, false);
 }
