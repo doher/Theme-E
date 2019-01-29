@@ -15,6 +15,8 @@ divButton.appendChild(buttonReset);
 document.body.appendChild(divField);
 document.body.appendChild(divButton);
 
+divField.addEventListener('click', removeRect, false);
+
 buttonAddRect.addEventListener('click', function () {
     let rect = document.createElement('div'),
         borderColor = 'rgb(' + randomFunc(0, 255) + ',' + randomFunc(0, 255) + ',' + randomFunc(0, 255) + ')',
@@ -41,6 +43,17 @@ buttonReset.addEventListener('click', function () {
 
 }, false);
 
+function removeRect(event) {
+    event = event || window.event;
+
+    let rect = event.target || event.srcElement;
+
+    if (rect.className == 'rect') {
+        rect.parentNode.removeChild(rect);
+    }
+    
+}
+
 function randomFunc(n, m) {
     return Math.floor(Math.random() * (m - n + 1)) + n;
 }
@@ -48,8 +61,8 @@ function randomFunc(n, m) {
 function getRectCoor() {
     let rect = document.querySelector('div.rect'),
         div = document.querySelector('div#field'),
-        coorX = div.offsetWidth - 2 * div.clientLeft - (rect.offsetWidth + rect.clientLeft),
-        coorY = div.offsetHeight - 2 * div.clientTop - (rect.offsetHeight + rect.clientTop);
+        coorX = div.offsetWidth - 2 * div.clientLeft - rect.offsetWidth,
+        coorY = div.offsetHeight - 2 * div.clientTop - rect.offsetHeight;
 
     return [coorX, coorY];
 }
