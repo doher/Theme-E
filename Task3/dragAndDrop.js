@@ -82,20 +82,21 @@ function setCoords() {
     };
 }
 
-function moveAt(eventObj) {
-    let rect = eventObj.target || eventObj.srcElement,
-        coords = getCoords(rect),
-        shiftX = eventObj.pageX - coords.left,
-        shiftY = eventObj.pageY - coords.top;
-
-    rect.style.left = eventObj.pageX - shiftX + 'px';
-    rect.style.top = eventObj.pageY - shiftY + 'px';
-}
-
-function moveElement(eventObj) {
+function mouseMove(eventObj, shiftX, shiftY) {
     eventObj = eventObj || window.event;
 
+    let rect = eventObj.target || eventObj.srcElement;
+
     moveAt(eventObj);
+
+    function moveAt(eventObj) {
+
+        console.log(eventObj.pageX - shiftX);
+        console.log(eventObj.pageY - shiftY);
+
+        rect.style.left = eventObj.pageX - shiftX + 'px';
+        rect.style.top = eventObj.pageY - shiftY + 'px';
+    }
 
     console.log('mousemove!');
 }
@@ -108,7 +109,14 @@ divField.addEventListener('mousedown', function (eventObj) {
     if (rect.className === 'rect') {
         console.log('mousedown!');
 
-        rect.addEventListener('mousemove', moveElement, false);
+        let coords = getCoords(rect),
+            shiftX = eventObj.pageX - coords.left,
+            shiftY = eventObj.pageY - coords.top;
+
+        console.log(shiftX);
+        console.log(shiftY);
+
+        rect.addEventListener('mousemove', mouseMove(eventObj, shiftX, shiftY), false);
     }
 }, false);
 
@@ -118,7 +126,7 @@ divField.addEventListener('mouseup', function (eventObj) {
     let rect = eventObj.target || eventObj.srcElement;
 
     if (rect.className === 'rect') {
-        rect.removeEventListener('mousemove', moveElement, false);
+        rect.removeEventListener('mousemove', mouseMove, false);
         console.log('mouseup!');
     }
 }, false);
