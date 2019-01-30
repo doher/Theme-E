@@ -15,9 +15,7 @@ divButton.appendChild(buttonReset);
 document.body.appendChild(divField);
 document.body.appendChild(divButton);
 
-divField.addEventListener('click', removeRect, false);
-
-buttonAddRect.addEventListener('click', function () {
+buttonAddRect.addEventListener('click', function addElement() {
     let rect = document.createElement('div'),
         borderColor = 'rgb(' + randomFunc(0, 255) + ',' + randomFunc(0, 255) + ',' + randomFunc(0, 255) + ')',
         bgColor = 'rgb(' + randomFunc(0, 255) + ',' + randomFunc(0, 255) + ',' + randomFunc(0, 255) + ')';
@@ -27,10 +25,10 @@ buttonAddRect.addEventListener('click', function () {
 
     rect.className = 'rect';
     divField.appendChild(rect);
-    moveRect(rect);
+    locateElement(rect);
 }, false);
 
-buttonReset.addEventListener('click', function () {
+buttonReset.addEventListener('click', function reset() {
     let rect = document.getElementsByClassName('rect'),
         length = rect.length;
 
@@ -43,34 +41,84 @@ buttonReset.addEventListener('click', function () {
 
 }, false);
 
-function removeRect(event) {
-    event = event || window.event;
-
-    let rect = event.target || event.srcElement;
-
-    if (rect.className == 'rect') {
-        rect.parentNode.removeChild(rect);
-    }
-    
-}
-
 function randomFunc(n, m) {
     return Math.floor(Math.random() * (m - n + 1)) + n;
 }
 
-function getRectCoor() {
+function locateElement(element) {
+    let coords = setCoords(),
+        coorXMin = coords.leftMin,
+        coorXMax = coords.leftMax,
+        coorYMin = coords.topMin,
+        coorYMax = coords.topMax;
+
+    element.style.left = randomFunc(coorXMin, coorXMax) + 'px';
+    element.style.top = randomFunc(coorYMin, coorYMax) + 'px';
+}
+
+function getCoords(element) {
+    let box = element.getBoundingClientRect();
+
+    return {
+        top: box.top + pageYOffset,
+        left: box.left + pageXOffset
+    };
+}
+
+function setCoords() {
     let rect = document.querySelector('div.rect'),
         div = document.querySelector('div#field'),
-        coorX = div.offsetWidth - 2 * div.clientLeft - rect.offsetWidth,
-        coorY = div.offsetHeight - 2 * div.clientTop - rect.offsetHeight;
+        coords = getCoords(div),
+        coorXMin = coords.left,
+        coorYMin = coords.top,
+        coorXMax = coords.left + div.offsetWidth - rect.offsetWidth,
+        coorYMax = coords.top + div.offsetHeight - rect.offsetHeight;
 
-    return [coorX, coorY];
+    return {
+        leftMin: coorXMin,
+        leftMax: coorXMax,
+        topMin: coorYMin,
+        topMax: coorYMax
+    };
 }
 
-function moveRect(rect) {
-    let coorX = getRectCoor()[0],
-        coorY = getRectCoor()[1];
+function moveAt(eventObj) {
+    let rect = eventObj.target || eventObj.srcElement,
+        coords = getCoords(rect),
+        shiftX = eventObj.pageX - coords.left,
+        shiftY = eventObj.pageY - coords.top;
 
-    rect.style.left = randomFunc(0, coorX) + 'px';
-    rect.style.top = randomFunc(0, coorY) + 'px';
+    rect.style.left = eventObj.pageX - shiftX + 'px';
+    rect.style.top = eventObj.pageY - shiftY + 'px';
 }
+
+function moveElement(eventObj) {
+    eventObj = eventObj || window.event;
+
+    moveAt(eventObj);
+
+    console.log('mousemove!');
+}
+
+divField.addEventListener('mousedown', function (eventObj) {
+    eventObj = eventObj || window.event;
+
+    let rect = eventObj.target || eventObj.srcElement;
+
+    if (rect.className === 'rect') {
+        console.log('mousedown!');
+
+        rect.addEventListener('mousemove', moveElement, false);
+    }
+}, false);
+
+divField.addEventListener('mouseup', function (eventObj) {
+    eventObj = eventObj || window.event;
+
+    let rect = eventObj.target || eventObj.srcElement;
+
+    if (rect.className === 'rect') {
+        rect.removeEventListener('mousemove', moveElement, false);
+        console.log('mouseup!');
+    }
+}, false);
