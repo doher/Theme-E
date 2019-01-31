@@ -82,35 +82,59 @@ function setCoords() {
     };
 }
 
-divField.onmousedown = function (e) {
-    e = e || window.event;
+function mouseMove(eventObj) {
+    eventObj = eventObj || window.event;
 
-    let rect = e.target || e.srcElement,
+    let rect = eventObj.target || eventObj.srcElement;
+
+
+    rect.style.left = moveAt(eventObj).left;
+    rect.style.top = moveAt(eventObj).top;
+
+    console.log(moveAt(eventObj).left);
+    console.log(moveAt(eventObj).top);
+    console.log('mousemove!');
+}
+
+function moveAt(eventObj) {
+    eventObj = eventObj || window.event;
+
+    let rect = eventObj.target || eventObj.srcElement,
         coords = getCoords(rect),
-        shiftX = e.pageX - coords.left,
-        shiftY = e.pageY - coords.top;
+        shiftX = eventObj.pageX - coords.left,
+        shiftY = eventObj.pageY - coords.top;
 
-    rect.style.zIndex = 1000;
-    rect.style.cursor = 'pointer';
-    moveAt(e);
-
-    function moveAt(e) {
-        rect.style.left = e.pageX - shiftX + 'px';
-        rect.style.top = e.pageY - shiftY + 'px';
-    }
-
-    document.onmousemove = function (e) {
-        moveAt(e);
-    };
-
-    rect.onmouseup = function () {
-        document.onmousemove = null;
-        rect.onmouseup = null;
-        rect.style.zIndex = null;
-        rect.style.cursor = 'auto';
+    return {
+        left: eventObj.pageX - shiftX + 'px',
+        top: eventObj.pageY - shiftY + 'px'
     };
 }
 
-divField.ondragstart = function () {
-    return false;
-};
+divField.addEventListener('mousedown', function (eventObj) {
+    eventObj = eventObj || window.event;
+
+    let rect = eventObj.target || eventObj.srcElement;
+
+    if (rect.className !== 'rect') {
+        return;
+    }
+
+    moveAt(eventObj);
+
+    console.log('mousedown!');
+
+    document.addEventListener('mousemove', mouseMove, false);
+}, false);
+
+divField.addEventListener('mouseup', function (eventObj) {
+    eventObj = eventObj || window.event;
+
+    let rect = eventObj.target || eventObj.srcElement;
+
+    if (rect.className !== 'rect') {
+        return;
+    }
+
+    document.removeEventListener('mousemove', mouseMove, false);
+    console.log('mouseup!');
+}, false);
