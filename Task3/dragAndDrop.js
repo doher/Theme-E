@@ -100,8 +100,6 @@ divField.onmousedown = function (e) {
     rect.style.zIndex = 1000;
     rect.style.cursor = 'pointer';
 
-    moveAt(e);
-
     function moveAt(e) {
         rect.style.left = e.pageX - shiftX + 'px';
         rect.style.top = e.pageY - shiftY + 'px';
