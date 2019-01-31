@@ -69,10 +69,10 @@ function setCoords() {
     let rect = document.querySelector('div.rect'),
         div = document.querySelector('div#field'),
         coords = getCoords(div),
-        coorXMin = coords.left,
-        coorYMin = coords.top,
-        coorXMax = coords.left + div.offsetWidth - rect.offsetWidth,
-        coorYMax = coords.top + div.offsetHeight - rect.offsetHeight;
+        coorXMin = coords.left + div.clientLeft,
+        coorYMin = coords.top + div.clientTop,
+        coorXMax = coords.left + div.offsetWidth - div.clientLeft - rect.offsetWidth,
+        coorYMax = coords.top + div.offsetHeight - div.clientTop - rect.offsetHeight;
 
     return {
         leftMin: coorXMin,
@@ -85,18 +85,42 @@ function setCoords() {
 divField.onmousedown = function (e) {
     e = e || window.event;
 
-    let rect = e.target || e.srcElement,
+    let rect = e.target || e.srcElement;
+
+    if (rect.className !== 'rect') {
+        return;
+    }
+
+    let div = document.querySelector('div#field'),
+        divCoords = getCoords(div),
         coords = getCoords(rect),
         shiftX = e.pageX - coords.left,
         shiftY = e.pageY - coords.top;
 
     rect.style.zIndex = 1000;
     rect.style.cursor = 'pointer';
+
     moveAt(e);
 
     function moveAt(e) {
         rect.style.left = e.pageX - shiftX + 'px';
         rect.style.top = e.pageY - shiftY + 'px';
+
+        if ((e.pageX - shiftX) < (divCoords.left + div.clientLeft)) {
+            rect.style.left = div.clientLeft + divCoords.left + 'px';
+        }
+
+        if ((e.pageX - shiftX + rect.clientWidth) > (divCoords.left + div.clientWidth)) {
+            rect.style.left = divCoords.left + div.clientWidth - rect.clientWidth + 'px';
+        }
+
+        if ((e.pageY - shiftY) < (divCoords.top + div.clientTop)) {
+            rect.style.top = div.clientTop + divCoords.top + 'px';
+        }
+
+        if ((e.pageY - shiftY + rect.clientHeight) > (divCoords.top + div.clientHeight)) {
+            rect.style.top = divCoords.top + div.clientHeight - rect.clientHeight + 'px';
+        }
     }
 
     document.onmousemove = function (e) {
