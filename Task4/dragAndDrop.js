@@ -41,6 +41,7 @@ buttonAdd.addEventListener('click', function createItem() {
 
     if (item) {
         div.setAttribute('class', 'item');
+        div.setAttribute('draggable', 'true');
         span.innerHTML = item;
         div.appendChild(span);
 
